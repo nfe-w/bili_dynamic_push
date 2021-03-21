@@ -11,10 +11,14 @@ from logger import logger
 class Push(object):
     serverChan_enable = None
     serverChan_sckey = None
+    serverChan_turbo_enable = None
+    serverChan_turbo_SendKey = None
 
     def __init__(self):
         self.serverChan_enable = global_config.get_raw('push_serverChan', 'enable')
         self.serverChan_sckey = global_config.get_raw('push_serverChan', 'serverChan_SCKEY')
+        self.serverChan_turbo_enable = global_config.get_raw('push_serverChan_turbo', 'enable')
+        self.serverChan_turbo_SendKey = global_config.get_raw('push_serverChan_turbo', 'serverChan_SendKey')
 
     def push_msg(self, uname=None, dynamic_id=None, content=None, dynamic_type=None, dynamic_time=None):
         """
@@ -35,6 +39,8 @@ class Push(object):
 
         if self.serverChan_enable == 'true':
             self._server_chan(dynamic_id, title, content)
+        if self.serverChan_turbo_enable == 'true':
+            self._server_chan_turbo(dynamic_id, title, content)
 
     def _server_chan(self, dynamic_id, title, content):
         """
@@ -46,6 +52,18 @@ class Push(object):
         push_url = 'https://sc.ftqq.com/{key}.send'.format(key=self.serverChan_sckey)
         response = requests.post(push_url, params={"text": title, "desp": content})
         logger.info('【推送_serverChan】{msg}，dynamic_id:[{dynamic_id}]'.format(
+            msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
+
+    def _server_chan_turbo(self, dynamic_id, title, content):
+        """
+        推送(serverChan_Turbo)
+        :param dynamic_id: 动态id
+        :param title: 标题
+        :param content: 内容
+        """
+        push_url = 'https://sctapi.ftqq.com/{key}.send'.format(key=self.serverChan_turbo_SendKey)
+        response = requests.post(push_url, params={"title": title, "desp": content})
+        logger.info('【推送_serverChan_Turbo】{msg}，dynamic_id:[{dynamic_id}]'.format(
             msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
 
 
