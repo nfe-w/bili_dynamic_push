@@ -57,9 +57,8 @@ def query_dynamic(uid=None):
                     content = card['item']['content']
                 elif dynamic_type == 8:
                     content = card['item']['title']
-                content = '[{dynamic_time}]'.format(dynamic_time=dynamic_time) + content
                 logger.info('【查询】【{uname}】动态有更新，准备推送：{content}'.format(uname=uname, content=content[:30]))
-                push.push_msg(uname, dynamic_id, content, dynamic_type)
+                push.push_msg(uname, dynamic_id, content, dynamic_type, dynamic_time)
         else:
             logger.error('【查询】请求返回数据code错误：{code}'.format(code=result['code']))
 
