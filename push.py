@@ -45,7 +45,8 @@ class Push(object):
         """
         push_url = 'https://sc.ftqq.com/{key}.send'.format(key=self.serverChan_sckey)
         response = requests.post(push_url, params={"text": title, "desp": content})
-        logger.info('【推送】{msg}，dynamic_id:[{dynamic_id}]'.format(msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
+        logger.info('【推送_serverChan】{msg}，dynamic_id:[{dynamic_id}]'.format(
+            msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
 
 
 push = Push()
