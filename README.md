@@ -30,12 +30,19 @@
 (2)`push_serverChan`下的参数
 
 - `enable`是否启用serverChan推送
-- `serverChan_SCKEY`如果启用该推送，必须填入 serverChan_SCKEY，如何获取请参考 http://sc.ftqq.com/3.version
+- `serverChan_SCKEY`如果启用该推送，则必填，参考 http://sc.ftqq.com/3.version
 
 (3)`push_serverChan_turbo`下的参数
 
 - `enable`是否启用serverChan_Turbo推送
-- `serverChan_SendKey`如果启用该推送，必须填入 serverChan_SendKey，如何获取请参考 https://sct.ftqq.com
+- `serverChan_SendKey`如果启用该推送，则必填，参考 https://sct.ftqq.com
+
+(4)`push_wechat`下的参数
+
+- `enable`是否启用微信推送
+- `corp_id`企业id，如果启用该推送，则必填
+- `agent_id`应用id，如果启用该推送，则必填
+- `corp_secret`应用Secret，如果启用该推送，则必填
 
 #### 2.安装第三方库
 
