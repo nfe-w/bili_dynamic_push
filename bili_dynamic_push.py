@@ -41,7 +41,7 @@ def query_dynamic(uid=None):
                 DYNAMIC_DICT[uid] = dynamic_id
 
                 dynamic_type = item['desc']['type']
-                if dynamic_type not in [2, 4, 8]:
+                if dynamic_type not in [1, 2, 4, 8]:
                     logger.info('【查询】【{uname}】动态有更新，但不在需要推送的动态类型列表中'.format(uname=uname))
                     return
 
@@ -52,7 +52,9 @@ def query_dynamic(uid=None):
 
                 content = None
                 pic_url = None
-                if dynamic_type == 2:
+                if dynamic_type == 1:
+                    content = card['item']['content']
+                elif dynamic_type == 2:
                     content = card['item']['description']
                     pic_url = card['item']['pictures'][0]['img_src']
                 elif dynamic_type == 4:

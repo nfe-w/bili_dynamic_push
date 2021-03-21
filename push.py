@@ -43,7 +43,12 @@ class Push(object):
             logger.error('【推送】缺少参数，uname:[{}]，dynamic_id:[{}]，content:[{}]'.format(uname, dynamic_id, content[:30]))
             return
 
-        title = '【{uname}】{dynamic_type}'.format(uname=uname, dynamic_type='投稿了' if dynamic_type == 8 else '发动态了')
+        title_msg = '发动态了'
+        if dynamic_type == 1:
+            title_msg = '转发了动态'
+        elif dynamic_type == 8:
+            title_msg = '投稿了'
+        title = '【{uname}】{dynamic_type}'.format(uname=uname, dynamic_type=title_msg)
         content = '{content}[{dynamic_time}]'.format(content=content[:100] + (content[100:] and '...'), dynamic_time=dynamic_time)
 
         if self.serverChan_enable == 'true':
