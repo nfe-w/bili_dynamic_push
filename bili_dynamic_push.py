@@ -64,7 +64,8 @@ def query_dynamic(uid=None):
                     content = card['item']['content']
                 elif dynamic_type == 8:
                     # 投稿动态
-                    content = card['item']['title']
+                    content = card['title']
+                    pic_url = card['pic']
                 elif dynamic_type == 64:
                     # 专栏动态
                     content = card['title']
