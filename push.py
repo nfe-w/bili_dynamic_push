@@ -68,7 +68,11 @@ class Push(object):
         """
         content = '`' + content + '`[点我直达](https://t.bilibili.com/{dynamic_id})'.format(dynamic_id=dynamic_id)
         push_url = 'https://sc.ftqq.com/{key}.send'.format(key=self.serverChan_sckey)
-        response = requests.post(push_url, params={"text": title, "desp": content})
+        try:
+            response = requests.post(push_url, params={"text": title, "desp": content})
+        except Exception as e:
+            logger.error("【推送_serverChan】：{}".format(e))
+            return
         logger.info('【推送_serverChan】{msg}，dynamic_id:[{dynamic_id}]'.format(
             msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
 
@@ -81,7 +85,11 @@ class Push(object):
         """
         content = '`' + content + '`[点我直达](https://t.bilibili.com/{dynamic_id})'.format(dynamic_id=dynamic_id)
         push_url = 'https://sctapi.ftqq.com/{key}.send'.format(key=self.serverChan_turbo_SendKey)
-        response = requests.post(push_url, params={"title": title, "desp": content})
+        try:
+            response = requests.post(push_url, params={"title": title, "desp": content})
+        except Exception as e:
+            logger.error("【推送_serverChan_Turbo】：{}".format(e))
+            return
         logger.info('【推送_serverChan_Turbo】{msg}，dynamic_id:[{dynamic_id}]'.format(
             msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
 
@@ -89,7 +97,11 @@ class Push(object):
         access_token = None
         url = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}'.format(
             corpid=self.wechat_corp_id, corpsecret=self.wechat_corp_secret)
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            logger.error("【推送_wechat】获取access_token：{}".format(e))
+            return
         if response.status_code == 200:
             result = json.loads(str(response.content, 'utf-8'))
             access_token = result['access_token']
@@ -140,7 +152,11 @@ class Push(object):
                 ]
             }
 
-        response = requests.post(push_url, params=params, data=json.dumps(body))
+        try:
+            response = requests.post(push_url, params=params, data=json.dumps(body))
+        except Exception as e:
+            logger.error("【推送_wechat】：{}".format(e))
+            return
         logger.info('【推送_wechat】{msg}，dynamic_id:[{dynamic_id}]'.format(
             msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
 

@@ -19,7 +19,11 @@ def query_dynamic(uid=None):
     uid = str(uid)
     query_url = 'https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history' \
                 '?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web'.format(uid=uid)
-    response = requests.get(query_url)
+    try:
+        response = requests.get(query_url)
+    except Exception as e:
+        logger.error("【查询】：{}".format(e))
+        return
     if response.status_code == 200:
         result = json.loads(str(response.content, 'utf-8'))
         if result['code'] == 0:
