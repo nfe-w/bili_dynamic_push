@@ -31,7 +31,7 @@ class Push(object):
 
     def push_msg(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None):
         """
-        推送
+        B站动态提醒推送
         :param uname: up主名字
         :param dynamic_id: 动态id
         :param content: 动态内容
@@ -50,48 +50,47 @@ class Push(object):
             title_msg = '投稿了'
         title = '【{uname}】{dynamic_type}'.format(uname=uname, dynamic_type=title_msg)
         content = '{content}[{dynamic_time}]'.format(content=content[:100] + (content[100:] and '...'), dynamic_time=dynamic_time)
+        dynamic_url = 'https://t.bilibili.com/{}'.format(dynamic_id)
 
         if self.serverChan_enable == 'true':
-            self._server_chan_push(dynamic_id, title, content)
+            self._server_chan_push(title, content, dynamic_url)
         if self.serverChan_turbo_enable == 'true':
-            self._server_chan_turbo_push(dynamic_id, title, content)
+            self._server_chan_turbo_push(title, content, dynamic_url)
         if self.wechat_enable == 'true':
             access_token = self._get_wechat_access_token()
-            self._wechat_push(access_token, dynamic_id, title, content, pic_url)
+            self._wechat_push(access_token, title, content, dynamic_url, pic_url)
 
-    def _server_chan_push(self, dynamic_id, title, content):
+    def _server_chan_push(self, title, content, url=None):
         """
         推送(serverChan)
-        :param dynamic_id: 动态id
         :param title: 标题
         :param content: 内容
+        :param url: 跳转地址
         """
-        content = '`' + content + '`[点我直达](https://t.bilibili.com/{dynamic_id})'.format(dynamic_id=dynamic_id)
+        content = '`' + content + '`[点我直达]({url})'.format(url=url)
         push_url = 'https://sc.ftqq.com/{key}.send'.format(key=self.serverChan_sckey)
         try:
             response = requests.post(push_url, params={"text": title, "desp": content})
         except Exception as e:
             logger.error("【推送_serverChan】：{}".format(e))
             return
-        logger.info('【推送_serverChan】{msg}，dynamic_id:[{dynamic_id}]'.format(
-            msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
+        logger.info('【推送_serverChan】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
 
-    def _server_chan_turbo_push(self, dynamic_id, title, content):
+    def _server_chan_turbo_push(self, title, content, url=None):
         """
         推送(serverChan_Turbo)
-        :param dynamic_id: 动态id
         :param title: 标题
         :param content: 内容
+        :param url: 跳转地址
         """
-        content = '`' + content + '`[点我直达](https://t.bilibili.com/{dynamic_id})'.format(dynamic_id=dynamic_id)
+        content = '`' + content + '`[点我直达]({url})'.format(url=url)
         push_url = 'https://sctapi.ftqq.com/{key}.send'.format(key=self.serverChan_turbo_SendKey)
         try:
             response = requests.post(push_url, params={"title": title, "desp": content})
         except Exception as e:
             logger.error("【推送_serverChan_Turbo】：{}".format(e))
             return
-        logger.info('【推送_serverChan_Turbo】{msg}，dynamic_id:[{dynamic_id}]'.format(
-            msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
+        logger.info('【推送_serverChan_Turbo】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
 
     def _get_wechat_access_token(self):
         access_token = None
@@ -109,13 +108,13 @@ class Push(object):
             logger.info('【推送_wechat】获取access_token失败')
         return access_token
 
-    def _wechat_push(self, access_token, dynamic_id, title, content, pic_url=None):
+    def _wechat_push(self, access_token, title, content, url=None, pic_url=None):
         """
         推送(wechat)
         :param access_token: 调用接口凭证
-        :param dynamic_id: 动态id
         :param title: 标题
         :param content: 内容
+        :param url: 跳转url
         :param pic_url: 图片url
         """
         push_url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send'
@@ -136,8 +135,8 @@ class Push(object):
             body["textcard"] = {
                 "title": title,
                 "description": content,
-                "url": 'https://t.bilibili.com/{}'.format(dynamic_id),
-                "btntxt": "打开动态"
+                "url": url,
+                "btntxt": "打开详情"
             }
         else:
             body["msgtype"] = "news"
@@ -146,7 +145,7 @@ class Push(object):
                     {
                         "title": title,
                         "description": content,
-                        "url": 'https://t.bilibili.com/{}'.format(dynamic_id),
+                        "url": url,
                         "picurl": pic_url
                     }
                 ]
@@ -157,8 +156,7 @@ class Push(object):
         except Exception as e:
             logger.error("【推送_wechat】：{}".format(e))
             return
-        logger.info('【推送_wechat】{msg}，dynamic_id:[{dynamic_id}]'.format(
-            msg='成功' if response.status_code == 200 else '失败', dynamic_id=dynamic_id))
+        logger.info('【推送_wechat】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
 
 
 push = Push()
