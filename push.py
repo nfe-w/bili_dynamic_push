@@ -29,7 +29,7 @@ class Push(object):
         self.wechat_agent_id = global_config.get_raw('push_wechat', 'agent_id')
         self.wechat_corp_secret = global_config.get_raw('push_wechat', 'corp_secret')
 
-    def push_msg(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None):
+    def push_for_bili_dynamic(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None):
         """
         B站动态提醒推送
         :param uname: up主名字
@@ -51,14 +51,34 @@ class Push(object):
         title = '【{uname}】{dynamic_type}'.format(uname=uname, dynamic_type=title_msg)
         content = '{content}[{dynamic_time}]'.format(content=content[:100] + (content[100:] and '...'), dynamic_time=dynamic_time)
         dynamic_url = 'https://t.bilibili.com/{}'.format(dynamic_id)
+        self._common_push(title, content, dynamic_url, pic_url)
 
+    def push_for_bili_live(self, uname=None, room_id=None, room_title=None, room_cover_url=None):
+        """
+        B站直播提醒推送
+        :param uname: up主名字
+        :param room_id: 直播间id
+        :param room_title: 直播间标题
+        :param room_cover_url: 直播间封面
+        """
+        title = '【{uname}】开播了'.format(uname=uname)
+        live_url = 'https://live.bilibili.com/{}'.format(room_id)
+        self._common_push(title, room_title, live_url, room_cover_url)
+
+    def _common_push(self, title, content, jump_url=None, pic_url=None):
+        """
+        :param title: 推送标题
+        :param content: 推送内容
+        :param jump_url: 调整url
+        :param pic_url: 图片url
+        """
         if self.serverChan_enable == 'true':
-            self._server_chan_push(title, content, dynamic_url)
+            self._server_chan_push(title, content, jump_url)
         if self.serverChan_turbo_enable == 'true':
-            self._server_chan_turbo_push(title, content, dynamic_url)
+            self._server_chan_turbo_push(title, content, jump_url)
         if self.wechat_enable == 'true':
             access_token = self._get_wechat_access_token()
-            self._wechat_push(access_token, title, content, dynamic_url, pic_url)
+            self._wechat_push(access_token, title, content, jump_url, pic_url)
 
     def _server_chan_push(self, title, content, url=None):
         """

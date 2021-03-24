@@ -50,10 +50,10 @@
 
 #### 3.启动脚本
 
-`nohup python3 -u bili_dynamic_push.py >& bili_dynamic_push.log &`
-
+`nohup python3 -u main.py >& bili_dynamic_push.log &`
 
 ## todo
+
 - [ ] 夜间停止扫描 还是 夜间低频模式 或者 是时间段形式的扫描
 - [ ] 基于企业微信的用户级别个性化配置
 - [ ] 考虑接入更多推送方式（重心还是在企业微信上）
