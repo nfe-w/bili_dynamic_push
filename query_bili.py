@@ -3,11 +3,11 @@
 #
 # @Time: 2021/3/21 00:59
 
-import requests
 import json
 import time
 from logger import logger
 from push import push
+import util
 
 DYNAMIC_DICT = {}
 LIVING_STATUS_DICT = {}
@@ -18,15 +18,13 @@ def query_dynamic(uid=None):
         return
     uid = str(uid)
     query_url = 'https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history' \
-                '?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web'.format(uid=uid)
-    try:
-        response = requests.get(query_url)
-    except Exception as e:
-        logger.error("【查询动态状态】：{}".format(e))
-        return
-    if response.status_code == 200:
+                '?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web&my_ts={my_ts}'.format(uid=uid, my_ts=int(time.time()))
+    response = util.requests_get(query_url, '查询动态状态')
+    if util.check_response_is_ok(response):
         result = json.loads(str(response.content, 'utf-8'))
-        if result['code'] == 0:
+        if result['code'] != 0:
+            logger.error('【查询动态状态】请求返回数据code错误：{code}'.format(code=result['code']))
+        else:
             data = result['data']
             if len(data['cards']) == 0:
                 logger.info('【查询动态状态】【{uid}】动态列表为空'.format(uid=uid))
@@ -38,7 +36,7 @@ def query_dynamic(uid=None):
 
             if DYNAMIC_DICT.get(uid, None) is None:
                 DYNAMIC_DICT[uid] = dynamic_id
-                logger.info('【查询】【{uname}】动态初始化'.format(uname=uname))
+                logger.info('【查询动态状态】【{uname}】动态初始化'.format(uname=uname))
                 return
 
             if DYNAMIC_DICT.get(uid, None) != dynamic_id:
@@ -77,23 +75,19 @@ def query_dynamic(uid=None):
                     pic_url = card['image_urls'][0]
                 logger.info('【查询动态状态】【{uname}】动态有更新，准备推送：{content}'.format(uname=uname, content=content[:30]))
                 push.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time)
-        else:
-            logger.error('【查询动态状态】请求返回数据code错误：{code}'.format(code=result['code']))
 
 
 def query_live_status(uid=None):
     if uid is None:
         return
     uid = str(uid)
-    query_url = 'https://api.bilibili.com/x/space/acc/info?mid={}'.format(uid)
-    try:
-        response = requests.get(query_url)
-    except Exception as e:
-        logger.error("【查询直播状态】：{}".format(e))
-        return
-    if response.status_code == 200:
+    query_url = 'https://api.bilibili.com/x/space/acc/info?mid={}&my_ts={}'.format(uid, int(time.time()))
+    response = util.requests_get(query_url, '查询直播状态')
+    if util.check_response_is_ok(response):
         result = json.loads(str(response.content, 'utf-8'))
-        if result['code'] == 0:
+        if result['code'] != 0:
+            logger.error('【查询直播状态】请求返回数据code错误：{code}'.format(code=result['code']))
+        else:
             name = result['data']['name']
             live_status = result['data']['live_room']['liveStatus']
 
@@ -112,5 +106,3 @@ def query_live_status(uid=None):
                 if live_status == 1:
                     logger.info('【查询直播状态】【{name}】开播了，准备推送：{room_title}'.format(name=name, room_title=room_title))
                     push.push_for_bili_live(name, room_id, room_title, room_cover_url)
-        else:
-            logger.error('【查询直播状态】请求返回数据code错误：{code}'.format(code=result['code']))

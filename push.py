@@ -3,10 +3,10 @@
 #
 # @Time: 2021/3/21 12:33
 
-import requests
 import json
 from config import global_config
 from logger import logger
+import util
 
 
 class Push(object):
@@ -89,12 +89,8 @@ class Push(object):
         """
         content = '`' + content + '`[点我直达]({url})'.format(url=url)
         push_url = 'https://sc.ftqq.com/{key}.send'.format(key=self.serverChan_sckey)
-        try:
-            response = requests.post(push_url, params={"text": title, "desp": content})
-        except Exception as e:
-            logger.error("【推送_serverChan】：{}".format(e))
-            return
-        logger.info('【推送_serverChan】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
+        response = util.requests_post(push_url, '推送_serverChan', params={"text": title, "desp": content})
+        logger.info('【推送_serverChan】{msg}'.format(msg='成功' if util.check_response_is_ok(response) else '失败'))
 
     def _server_chan_turbo_push(self, title, content, url=None):
         """
@@ -105,27 +101,17 @@ class Push(object):
         """
         content = '`' + content + '`[点我直达]({url})'.format(url=url)
         push_url = 'https://sctapi.ftqq.com/{key}.send'.format(key=self.serverChan_turbo_SendKey)
-        try:
-            response = requests.post(push_url, params={"title": title, "desp": content})
-        except Exception as e:
-            logger.error("【推送_serverChan_Turbo】：{}".format(e))
-            return
-        logger.info('【推送_serverChan_Turbo】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
+        response = util.requests_post(push_url, '推送_serverChan_Turbo', params={"title": title, "desp": content})
+        logger.info('【推送_serverChan_Turbo】{msg}'.format(msg='成功' if util.check_response_is_ok(response) else '失败'))
 
     def _get_wechat_access_token(self):
         access_token = None
         url = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}'.format(
             corpid=self.wechat_corp_id, corpsecret=self.wechat_corp_secret)
-        try:
-            response = requests.get(url)
-        except Exception as e:
-            logger.error("【推送_wechat】获取access_token：{}".format(e))
-            return
-        if response.status_code == 200:
+        response = util.requests_get(url, '推送_wechat_获取access_tokon')
+        if util.check_response_is_ok(response):
             result = json.loads(str(response.content, 'utf-8'))
             access_token = result['access_token']
-        else:
-            logger.info('【推送_wechat】获取access_token失败')
         return access_token
 
     def _wechat_push(self, access_token, title, content, url=None, pic_url=None):
@@ -171,12 +157,8 @@ class Push(object):
                 ]
             }
 
-        try:
-            response = requests.post(push_url, params=params, data=json.dumps(body))
-        except Exception as e:
-            logger.error("【推送_wechat】：{}".format(e))
-            return
-        logger.info('【推送_wechat】{msg}'.format(msg='成功' if response.status_code == 200 else '失败'))
+        response = util.requests_post(push_url, '推送_wechat', params=params, data=json.dumps(body))
+        logger.info('【推送_wechat】{msg}'.format(msg='成功' if util.check_response_is_ok(response) else '失败'))
 
 
 push = Push()
