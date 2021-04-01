@@ -5,12 +5,14 @@
 
 import json
 import time
+from collections import deque
 from logger import logger
 from push import push
 import util
 
 DYNAMIC_DICT = {}
 LIVING_STATUS_DICT = {}
+LEN_OF_DEQUE = 12
 
 
 def query_dynamic(uid=None):
@@ -35,13 +37,20 @@ def query_dynamic(uid=None):
             uname = item['desc']['user_profile']['info']['uname']
 
             if DYNAMIC_DICT.get(uid, None) is None:
-                DYNAMIC_DICT[uid] = dynamic_id
-                logger.info('【查询动态状态】【{uname}】动态初始化'.format(uname=uname))
+                DYNAMIC_DICT[uid] = deque(maxlen=LEN_OF_DEQUE)
+                cards = data['cards']
+                for index in range(LEN_OF_DEQUE):
+                    if index < len(cards):
+                        DYNAMIC_DICT[uid].appendleft(cards[index]['desc']['dynamic_id'])
+                logger.info('【查询动态状态】【{uname}】动态初始化：{queue}'.format(uname=uname, queue=DYNAMIC_DICT[uid]))
                 return
 
-            if DYNAMIC_DICT.get(uid, None) != dynamic_id:
-                logger.info('【查询动态状态】【{}】上一条动态id[{}]，本条动态id[{}]'.format(uname, DYNAMIC_DICT.get(uid, None), dynamic_id))
-                DYNAMIC_DICT[uid] = dynamic_id
+            if dynamic_id not in DYNAMIC_DICT[uid]:
+                previous_dynamic_id = DYNAMIC_DICT[uid].pop()
+                DYNAMIC_DICT[uid].append(previous_dynamic_id)
+                logger.info('【查询动态状态】【{}】上一条动态id[{}]，本条动态id[{}]'.format(uname, previous_dynamic_id, dynamic_id))
+                DYNAMIC_DICT[uid].append(dynamic_id)
+                logger.info(DYNAMIC_DICT[uid])
 
                 dynamic_type = item['desc']['type']
                 if dynamic_type not in [1, 2, 4, 8, 64]:
