@@ -3,8 +3,10 @@
 #
 # @Time: 2021/3/28 01:00
 
-import requests
 import random
+
+import requests
+
 from logger import logger
 
 USER_AGENTS = [

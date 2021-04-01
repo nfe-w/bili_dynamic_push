@@ -4,9 +4,10 @@
 # @Time: 2021/3/21 12:33
 
 import json
+
+import util
 from config import global_config
 from logger import logger
-import util
 
 
 class Push(object):

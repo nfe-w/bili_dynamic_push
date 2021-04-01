@@ -6,9 +6,10 @@
 import json
 import time
 from collections import deque
+
+import util
 from logger import logger
 from push import push
-import util
 
 DYNAMIC_DICT = {}
 LIVING_STATUS_DICT = {}

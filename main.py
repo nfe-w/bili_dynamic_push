@@ -4,10 +4,11 @@
 # @Time: 2021/3/24 19:11
 
 import time
+
 from config import global_config
+from logger import logger
 from query_bili import query_dynamic
 from query_bili import query_live_status
-from logger import logger
 
 if __name__ == '__main__':
     enable_dynamic_push = global_config.get_raw('config', 'enable_dynamic_push')
