@@ -1,4 +1,4 @@
-# Bili_Dynamic_Push
+# bili_dynamic_push
 
 ## 声明:
 
@@ -30,7 +30,7 @@
 (2)`proxy_pool`下的参数
 
 - `enable`是否启用ip池
-- `proxy_pool_url`为ip池地址，如果启用ip池，则必填，ip池参考：https://github.com/jhao104/proxy_pool
+- `proxy_pool_url`为ip池地址，如果启用ip池，则必填，参考 https://github.com/jhao104/proxy_pool
 
 (3)`push_serverChan`下的参数
 

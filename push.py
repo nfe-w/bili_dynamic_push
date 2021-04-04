@@ -70,7 +70,7 @@ class Push(object):
         """
         :param title: 推送标题
         :param content: 推送内容
-        :param jump_url: 调整url
+        :param jump_url: 跳转url
         :param pic_url: 图片url
         """
         if self.serverChan_enable == 'true':
