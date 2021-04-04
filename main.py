@@ -7,6 +7,7 @@ import time
 
 from config import global_config
 from logger import logger
+from proxy import my_proxy
 from query_bili import query_dynamic
 from query_bili import query_live_status
 
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     while True:
         current_time = time.strftime("%H:%M", time.localtime(time.time()))
         if begin_time <= current_time <= end_time:
+            my_proxy.current_proxy_ip = my_proxy.get_proxy()
             for _ in uid_list:
                 if enable_dynamic_push == 'true':
                     query_dynamic(_)

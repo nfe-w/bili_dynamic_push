@@ -27,17 +27,22 @@
 - `begin_time`为扫描开始时间，非必填，不支持跨日期
 - `end_time`为扫描停止时间，非必填，不支持跨日期
 
-(2)`push_serverChan`下的参数
+(2)`proxy_pool`下的参数
+
+- `enable`是否启用ip池
+- `proxy_pool_url`为ip池地址，如果启用ip池，则必填，ip池参考：https://github.com/jhao104/proxy_pool
+
+(3)`push_serverChan`下的参数
 
 - `enable`是否启用serverChan推送
 - `serverChan_SCKEY`如果启用该推送，则必填，参考 http://sc.ftqq.com/3.version
 
-(3)`push_serverChan_turbo`下的参数
+(4)`push_serverChan_turbo`下的参数
 
 - `enable`是否启用serverChan_Turbo推送
 - `serverChan_SendKey`如果启用该推送，则必填，参考 https://sct.ftqq.com
 
-(4)`push_wechat`下的参数
+(5)`push_wechat`下的参数
 
 - `enable`是否启用微信推送
 - `corp_id`企业id，如果启用该推送，则必填

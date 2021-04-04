@@ -20,9 +20,10 @@ def query_dynamic(uid=None):
     if uid is None:
         return
     uid = str(uid)
-    query_url = 'https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history' \
+    query_url = 'http://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history' \
                 '?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web&my_ts={my_ts}'.format(uid=uid, my_ts=int(time.time()))
-    response = util.requests_get(query_url, '查询动态状态')
+    headers = get_headers(uid)
+    response = util.requests_get(query_url, '查询动态状态', headers=headers, use_proxy=True)
     if util.check_response_is_ok(response):
         result = json.loads(str(response.content, 'utf-8'))
         if result['code'] != 0:
@@ -91,8 +92,9 @@ def query_live_status(uid=None):
     if uid is None:
         return
     uid = str(uid)
-    query_url = 'https://api.bilibili.com/x/space/acc/info?mid={}&my_ts={}'.format(uid, int(time.time()))
-    response = util.requests_get(query_url, '查询直播状态')
+    query_url = 'http://api.bilibili.com/x/space/acc/info?mid={}&my_ts={}'.format(uid, int(time.time()))
+    headers = get_headers(uid)
+    response = util.requests_get(query_url, '查询直播状态', headers=headers, use_proxy=True)
     if util.check_response_is_ok(response):
         result = json.loads(str(response.content, 'utf-8'))
         if result['code'] != 0:
@@ -116,3 +118,18 @@ def query_live_status(uid=None):
                 if live_status == 1:
                     logger.info('【查询直播状态】【{name}】开播了，准备推送：{room_title}'.format(name=name, room_title=room_title))
                     push.push_for_bili_live(name, room_id, room_title, room_cover_url)
+
+
+def get_headers(uid):
+    return {
+        'accept': 'application/json, text/plain, */*',
+        'accept-encoding': 'gzip, deflate, br',
+        'accept-language': 'zh-CN,zh;q=0.9',
+        'cache-control': 'no-cache',
+        'cookie': 'l=v;',
+        'origin': 'https://space.bilibili.com',
+        'pragma': 'no-cache',
+        'referer': 'https://space.bilibili.com/{}/dynamic'.format(uid),
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+    }

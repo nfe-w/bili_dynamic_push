@@ -8,6 +8,7 @@ import random
 import requests
 
 from logger import logger
+from proxy import my_proxy
 
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
@@ -61,28 +62,45 @@ def get_random_useragent():
     return random.choice(USER_AGENTS)
 
 
-def requests_get(url, module_name='未指定', params=None):
-    headers = {
+def requests_get(url, module_name='未指定', headers=None, params=None, use_proxy=False):
+    if headers is None:
+        headers = {}
+    headers = dict({
         'User-Agent': get_random_useragent()
-    }
+    }, **headers)
+    proxies = _get_proxy() if use_proxy else None
     try:
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, proxies=proxies, timeout=10)
     except Exception as e:
         logger.error("【{}】：{}".format(module_name, e))
         return None
     return response
 
 
-def requests_post(url, module_name='未指定', params=None, data=None, json=None):
-    headers = {
+def requests_post(url, module_name='未指定', headers=None, params=None, data=None, json=None, use_proxy=False):
+    if headers is None:
+        headers = {}
+    headers = dict({
         'User-Agent': get_random_useragent()
-    }
+    }, **headers)
+    proxies = _get_proxy() if use_proxy else None
     try:
-        response = requests.post(url, headers=headers, params=params, data=data, json=json)
+        response = requests.post(url, headers=headers, params=params, data=data, json=json, proxies=proxies, timeout=10)
     except Exception as e:
         logger.error("【{}】：{}".format(module_name, e))
         return None
     return response
+
+
+def _get_proxy():
+    if my_proxy.enable == 'true':
+        proxy_ip = my_proxy.current_proxy_ip
+        if proxy_ip is None:
+            return None
+        else:
+            return {
+                "http": "http://{}".format(proxy_ip)
+            }
 
 
 def check_response_is_ok(response=None):
