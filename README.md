@@ -18,7 +18,7 @@
 
 ## 使用教程
 
-#### 1. 填写config.ini配置信息
+#### 1. 填写config_bili.ini配置信息
 
 (1)`config`下的参数
 
