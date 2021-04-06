@@ -13,7 +13,7 @@ from push import push
 
 DYNAMIC_DICT = {}
 LIVING_STATUS_DICT = {}
-LEN_OF_DEQUE = 12
+LEN_OF_DEQUE = 20
 
 
 def query_dynamic(uid=None):
@@ -55,7 +55,7 @@ def query_dynamic(uid=None):
                 logger.info(DYNAMIC_DICT[uid])
 
                 dynamic_type = item['desc']['type']
-                if dynamic_type not in [1, 2, 4, 8, 64]:
+                if dynamic_type not in [2, 4, 8, 64]:
                     logger.info('【查询动态状态】【{uname}】动态有更新，但不在需要推送的动态类型列表中'.format(uname=uname))
                     return
 
