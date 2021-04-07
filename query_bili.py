@@ -36,7 +36,11 @@ def query_dynamic(uid=None):
 
             item = data['cards'][0]
             dynamic_id = item['desc']['dynamic_id']
-            uname = item['desc']['user_profile']['info']['uname']
+            try:
+                uname = item['desc']['user_profile']['info']['uname']
+            except KeyError:
+                logger.error('【查询动态状态】【{uid}】获取不到uname'.format(uid=uid))
+                return
 
             if DYNAMIC_DICT.get(uid, None) is None:
                 DYNAMIC_DICT[uid] = deque(maxlen=LEN_OF_DEQUE)
