@@ -105,7 +105,11 @@ def query_live_status(uid=None):
             logger.error('【查询直播状态】请求返回数据code错误：{code}'.format(code=result['code']))
         else:
             name = result['data']['name']
-            live_status = result['data']['live_room']['liveStatus']
+            try:
+                live_status = result['data']['live_room']['liveStatus']
+            except (KeyError, TypeError):
+                logger.error('【查询动态状态】【{uid}】获取不到liveStatus'.format(uid=uid))
+                return
 
             if LIVING_STATUS_DICT.get(uid, None) is None:
                 LIVING_STATUS_DICT[uid] = live_status
