@@ -25,7 +25,11 @@ def query_dynamic(uid=None):
     headers = get_headers(uid)
     response = util.requests_get(query_url, '查询动态状态', headers=headers, use_proxy=True)
     if util.check_response_is_ok(response):
-        result = json.loads(str(response.content, 'utf-8'))
+        try:
+            result = json.loads(str(response.content, 'utf-8'))
+        except UnicodeDecodeError:
+            logger.error('【查询动态状态】【{uid}】解析content出错'.format(uid=uid))
+            return
         if result['code'] != 0:
             logger.error('【查询动态状态】请求返回数据code错误：{code}'.format(code=result['code']))
         else:
@@ -131,7 +135,7 @@ def query_live_status(uid=None):
 def get_headers(uid):
     return {
         'accept': 'application/json, text/plain, */*',
-        'accept-encoding': 'gzip, deflate, br',
+        'accept-encoding': 'gzip, deflate',
         'accept-language': 'zh-CN,zh;q=0.9',
         'cache-control': 'no-cache',
         'cookie': 'l=v;',
