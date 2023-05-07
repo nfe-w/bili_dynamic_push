@@ -9,7 +9,7 @@ from config import global_config
 from logger import logger
 from proxy import my_proxy
 from query_bili import query_dynamic
-from query_bili import query_live_status
+from query_bili import query_live_status_batch
 
 if __name__ == '__main__':
     enable_dynamic_push = global_config.get_raw('config', 'enable_dynamic_push')
@@ -33,6 +33,6 @@ if __name__ == '__main__':
             for _ in uid_list:
                 if enable_dynamic_push == 'true':
                     query_dynamic(_)
-                if enable_living_push == 'true':
-                    query_live_status(_)
+            if enable_living_push == 'true':
+                query_live_status_batch(uid_list)
         time.sleep(intervals_second)

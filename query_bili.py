@@ -96,6 +96,7 @@ def query_dynamic(uid=None):
                 push.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time)
 
 
+# 此方法已废弃
 def query_live_status(uid=None):
     if uid is None:
         return
@@ -130,6 +131,48 @@ def query_live_status(uid=None):
                 if live_status == 1:
                     logger.info('【查询直播状态】【{name}】开播了，准备推送：{room_title}'.format(name=name, room_title=room_title))
                     push.push_for_bili_live(name, room_id, room_title, room_cover_url)
+
+
+def query_live_status_batch(uid_list=None):
+    if uid_list is None:
+        uid_list = []
+    if len(uid_list) == 0:
+        return
+    query_url = 'https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids'
+    headers = get_headers(uid_list[0])
+    data = json.dumps({
+        "uids": list(map(int, uid_list))
+    })
+    response = util.requests_post(query_url, '查询直播状态', headers=headers, data=data, use_proxy=True)
+    if util.check_response_is_ok(response):
+        result = json.loads(str(response.content, 'utf-8'))
+        if result['code'] != 0:
+            logger.error('【查询直播状态】请求返回数据code错误：{code}'.format(code=result['code']))
+        else:
+            live_status_list = result['data']
+            for uid, item_info in live_status_list.items():
+                try:
+                    uname = item_info['uname']
+                    live_status = item_info['live_status']
+                except (KeyError, TypeError):
+                    logger.error(f'【查询动态状态】【{uid}】获取不到live_status')
+                    continue
+
+                if LIVING_STATUS_DICT.get(uid, None) is None:
+                    LIVING_STATUS_DICT[uid] = live_status
+                    logger.info(f'【查询直播状态】【{uname}】初始化')
+                    continue
+
+                if LIVING_STATUS_DICT.get(uid, None) != live_status:
+                    LIVING_STATUS_DICT[uid] = live_status
+
+                    room_id = item_info['room_id']
+                    room_title = item_info['title']
+                    room_cover_url = item_info['cover_from_user']
+
+                    if live_status == 1:
+                        logger.info(f'【查询直播状态】【{uname}】开播了，准备推送：{room_title}')
+                        push.push_for_bili_live(uname, room_id, room_title, room_cover_url)
 
 
 def get_headers(uid):
