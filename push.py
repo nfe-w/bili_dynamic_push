@@ -55,7 +55,7 @@ class Push(object):
             title_msg = '投稿了'
         title = '【{uname}】{dynamic_type}'.format(uname=uname, dynamic_type=title_msg)
         content = '{content}[{dynamic_time}]'.format(content=content[:100] + (content[100:] and '...'), dynamic_time=dynamic_time)
-        dynamic_url = 'https://t.bilibili.com/{}'.format(dynamic_id)
+        dynamic_url = 'https://www.bilibili.com/opus/{}'.format(dynamic_id)
         self._common_push(title, content, dynamic_url, pic_url)
 
     def push_for_bili_live(self, uname=None, room_id=None, room_title=None, room_cover_url=None):
