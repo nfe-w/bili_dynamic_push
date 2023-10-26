@@ -12,6 +12,16 @@
 
 定时检测指定up的动态，如果发生变化进行推送
 
+## Docker
+
+```sh
+# 构建镜像
+docker build -t nfew/bili_dynamic_push:latest .
+
+# 启动容器
+docker run -d -v ~/config_bili.ini:/mnt/config_bili.ini --name bili_dynamic_push nfew/bili_dynamic_push:latest
+```
+
 ## 运行环境
 
 - [Python 3](https://www.python.org/)
