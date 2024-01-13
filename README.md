@@ -63,6 +63,15 @@ docker run -d -v ~/config_bili.ini:/mnt/config_bili.ini --name bili_dynamic_push
 - `enable`是否启用钉钉bot推送
 - `access_token`机器人access_token，如果启用该推送，则必填
 
+(7)`push_feishu`下的参数
+- `enable`是否启用飞书推送
+- `app_id`飞书应用id，如果启用该推送，则必填，参考 https://open.feishu.cn/document/server-docs/api-call-guide/calling-process/get-access-token#95c7f5f5
+- `app_secret`飞书应用secret，如果启用该推送，则必填
+- `receive_id_type`飞书接收id类型，如果启用该推送，则必填，参考 https://open.feishu.cn/document/server-docs/im-v1/message/create
+- `receive_id`飞书接收id，如果启用该推送，则必填
+- `template_id`飞书消息模板id，如果启用该推送，则必填，参考 https://open.feishu.cn/document/server-docs/im-v1/message-content-description/create_json#11e75d0
+
+
 #### 2.安装第三方库
 
 `pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/`
